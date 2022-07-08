@@ -1,34 +1,48 @@
 ﻿namespace FacebookTransactionParser
 {
+    using System.Globalization;
+    using CsvHelper;
     using FacebookTransactionParser.Entities;
 
     public static class TransactionParser
     {
-        public static IEnumerable<TransactionEntity>? ParseTransactionFile(string filePath)
+        public static OrderSummaryEntity? ParseTransactionFile(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
-            {
-                return null;
-            }
-
-            if (!File.Exists(filePath))
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 return null;
             }
 
             var entities = Parse(filePath);
 
-            return entities;
+            if (entities == null || !entities.Any())
+            {
+                return null;
+            }
+
+            // Create return object
+            return new OrderSummaryEntity()
+            {
+                Filename = Path.GetFileName(filePath),
+                TransactionEntities = entities,
+            };
         }
 
         private static IEnumerable<TransactionEntity>? Parse(string filePath)
         {
-            return null;
-        }
+            try
+            {
+                var reader = new StreamReader(filePath);
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var records = csv.GetRecords<TransactionEntity>();
+                return records;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error reading file. Reason: {e.Message}");
+            }
 
-        private static bool CheckFileHeader(string header)
-        {
-            return false;
+            return null;
         }
     }
 }
