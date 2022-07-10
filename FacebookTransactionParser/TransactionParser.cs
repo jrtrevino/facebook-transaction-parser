@@ -20,12 +20,7 @@
                 return null;
             }
 
-            // Create return object
-            return new OrderSummaryEntity()
-            {
-                Filename = Path.GetFileName(filePath),
-                TransactionEntities = entities,
-            };
+            return new OrderSummaryEntity(Path.GetFileName(filePath), entities);
         }
 
         private static IEnumerable<TransactionEntity>? Parse(string filePath)
@@ -35,7 +30,7 @@
                 var reader = new StreamReader(filePath);
                 using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
                 var records = csv.GetRecords<TransactionEntity>();
-                return records;
+                return records.ToList();
             }
             catch (Exception e)
             {
