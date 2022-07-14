@@ -1,12 +1,16 @@
 ﻿namespace FacebookTransactionParserTests;
 
 using FacebookTransactionParser;
+using Microsoft.Extensions.Logging;
 
 public class TransactionParserTests
 {
+    TransactionParser transactionParser;
     [SetUp]
     public void Setup()
     {
+        var logger = new Logger<TransactionParser>();
+        this.transactionParser = new TransactionParser();
     }
 
     [Test]
@@ -16,7 +20,7 @@ public class TransactionParserTests
         var filePath = "test";
 
         // Act
-        var response = TransactionParser.ParseTransactionFile(filePath);
+        var response = transactionParser.ParseTransactionFile(filePath);
 
         // Assert
         Assert.IsNull(response);
@@ -29,7 +33,7 @@ public class TransactionParserTests
         var filePath = "/Users/jtrevino/Projects/email-program/data/C2C_Order_History_Report_Lisa-Ruiz_03012022_03312022.csv";
 
         // Act
-        var response = TransactionParser.ParseTransactionFile(filePath);
+        var response = transactionParser.ParseTransactionFile(filePath);
 
         // Assert
         Assert.IsNotNull(response);

@@ -1,8 +1,9 @@
 ﻿namespace FacebookTransactionParser.Entities
 {
     using CsvHelper.Configuration.Attributes;
+    using FacebookTransactionParser.Contracts;
 
-    public class TransactionEntity
+    public class TransactionEntity : ITransactionEntity
     {
         [Name("Order ID")]
         public long OrderId { get; set; }

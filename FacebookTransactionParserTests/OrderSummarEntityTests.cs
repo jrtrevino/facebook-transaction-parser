@@ -52,10 +52,10 @@ public class OrderSummaryTests
         Assert.That(metrics.ContainsKey("shipping"), Is.True);
         Assert.That(metrics.ContainsKey("fee"), Is.True);
         Assert.That(metrics["revenue"], Is.EqualTo(19.5M));
-        Assert.That(metrics["profit"], Is.EqualTo(18.15M));
+        Assert.That(metrics["profit"], Is.EqualTo(17.28M));
         Assert.That(metrics["tax"], Is.EqualTo(2.2M));
         Assert.That(metrics["shipping"], Is.EqualTo(7.6M));
-        Assert.That(metrics["fee"], Is.EqualTo(1.35M));
+        Assert.That(metrics["fee"], Is.EqualTo(2.22M));
 
     }
 }

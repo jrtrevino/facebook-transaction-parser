@@ -3,17 +3,27 @@
     using System.Globalization;
     using CsvHelper;
     using FacebookTransactionParser.Entities;
+    using Microsoft.Extensions.Logging;
 
-    public static class TransactionParser
+    public class TransactionParser
     {
-        public static OrderSummaryEntity? ParseTransactionFile(string filePath)
+        private readonly ILogger<TransactionParser> logger;
+
+        public TransactionParser(ILogger<TransactionParser> logger)
+        {
+            this.logger = logger;
+        }
+
+        public OrderSummaryEntity? ParseTransactionFile(string filePath)
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 return null;
             }
 
-            var entities = Parse(filePath);
+            this.logger.LogInformation($"File path received: {filePath}");
+
+            var entities = this.Parse(filePath);
 
             if (entities == null || !entities.Any())
             {
@@ -23,8 +33,9 @@
             return new OrderSummaryEntity(Path.GetFileName(filePath), entities);
         }
 
-        private static IEnumerable<TransactionEntity>? Parse(string filePath)
+        private IEnumerable<TransactionEntity>? Parse(string filePath)
         {
+            this.logger.LogInformation($"Begin parsing of file: {filePath}");
             try
             {
                 var reader = new StreamReader(filePath);
@@ -34,7 +45,7 @@
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error reading file. Reason: {e.Message}");
+                this.logger.LogError($"Error reading file. Reason: {e.Message}");
             }
 
             return null;

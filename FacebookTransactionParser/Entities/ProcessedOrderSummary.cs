@@ -39,7 +39,7 @@
         };
         }
 
-        // Calculates Facebook's selling fee.
+        // Calculates Facebook's selling fee for a single transaction's price.
         // As of 2022, this is $0.40 for sales $8.00 or less. For sales over $8, this is a 5% fee.
         // Total price should be a decimal representing the sum of an item's sale price, shipping price, and tax.
         private static decimal CalculateFacebookFee(decimal totalPrice)
