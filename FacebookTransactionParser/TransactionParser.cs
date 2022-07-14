@@ -2,14 +2,14 @@
 {
     using System.Globalization;
     using CsvHelper;
+    using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
-    using Microsoft.Extensions.Logging;
 
     public class TransactionParser
     {
-        private readonly ILogger<TransactionParser> logger;
+        private readonly ILogger logger;
 
-        public TransactionParser(ILogger<TransactionParser> logger)
+        public TransactionParser(ILogger logger)
         {
             this.logger = logger;
         }
@@ -21,7 +21,7 @@
                 return null;
             }
 
-            this.logger.LogInformation($"File path received: {filePath}");
+            this.logger.LogInfo($"File path received: {filePath}");
 
             var entities = this.Parse(filePath);
 
@@ -35,7 +35,7 @@
 
         private IEnumerable<TransactionEntity>? Parse(string filePath)
         {
-            this.logger.LogInformation($"Begin parsing of file: {filePath}");
+            this.logger.LogInfo($"Begin parsing of file: {filePath}");
             try
             {
                 var reader = new StreamReader(filePath);
