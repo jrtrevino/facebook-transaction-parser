@@ -1,12 +1,12 @@
 ﻿namespace FacebookTransactionParser.Entities
 {
-    public class OrderSummaryEntity
+    public class StatementEntity
     {
         private readonly string fileName;
 
         private readonly IEnumerable<TransactionEntity> transactionEntities;
 
-        public OrderSummaryEntity(string fileName, IEnumerable<TransactionEntity> transactionEntities)
+        public StatementEntity(string fileName, IEnumerable<TransactionEntity> transactionEntities)
         {
             this.fileName = fileName;
             this.transactionEntities = transactionEntities;

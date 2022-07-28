@@ -3,7 +3,7 @@
     using CsvHelper.Configuration.Attributes;
     using FacebookTransactionParser.Contracts;
 
-    public class TransactionEntity : ITransactionEntity
+    public class TransactionEntity
     {
         [Name("Order ID")]
         public long OrderId { get; set; }

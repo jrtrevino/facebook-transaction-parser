@@ -2,8 +2,8 @@
 {
     using System.Globalization;
     using CsvHelper;
-    using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
+    using Microsoft.Extensions.Logging;
 
     public class TransactionParser
     {
@@ -14,28 +14,30 @@
             this.logger = logger;
         }
 
-        public OrderSummaryEntity? ParseTransactionFile(string filePath)
+        public StatementEntity? ParseTransactionFile(string filePath)
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
+                this.logger.LogError($"The provided filePath does not exist: {filePath}");
                 return null;
             }
 
-            this.logger.LogInfo($"File path received: {filePath}");
+            this.logger.LogInformation($"File path received: {filePath}");
 
-            var entities = this.Parse(filePath);
+            var entities = this.GetRecordsFromFile(filePath);
 
             if (entities == null || !entities.Any())
             {
+                this.logger.LogInformation($"No records were parsed from the file.");
                 return null;
             }
 
-            return new OrderSummaryEntity(Path.GetFileName(filePath), entities);
+            return new StatementEntity(Path.GetFileName(filePath), entities);
         }
 
-        private IEnumerable<TransactionEntity>? Parse(string filePath)
+        private IEnumerable<TransactionEntity>? GetRecordsFromFile(string filePath)
         {
-            this.logger.LogInfo($"Begin parsing of file: {filePath}");
+            this.logger.LogInformation($"Begin parsing of file: {filePath}");
             try
             {
                 var reader = new StreamReader(filePath);
