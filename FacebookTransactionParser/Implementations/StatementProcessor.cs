@@ -1,10 +1,10 @@
-﻿namespace FacebookTransactionParser
+﻿namespace FacebookTransactionParser.Implementations
 {
     using System.Globalization;
     using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
 
-    public class StatementProcessor : ITransactionProcessor
+    public class StatementProcessor : IStatementProcessor
     {
         private readonly StatementEntity unprocessedEntity;
 
@@ -45,9 +45,10 @@
                 var revenue = ConvertPriceToDecimal(transaction.Price);
                 var tax = ConvertPriceToDecimal(transaction.Tax);
                 var shipping = ConvertPriceToDecimal(transaction.ShippingCost);
+                var combinedPrice = revenue + tax + shipping;
 
                 // Calculate seller fee
-                var fee = CalculateFacebookFee(revenue + tax + shipping);
+                var fee = transaction.GetVendorFeeFromPrice(combinedPrice.ToString());
 
                 // Update prices
                 this.TotalRevenue += revenue;
@@ -58,19 +59,6 @@
 
             // Set total profit after iterating through each transaction.
             this.TotalProfit = this.TotalRevenue - this.TotalSellerFee;
-        }
-
-        // Calculates Facebook's selling fee for a single transaction's price.
-        // As of 2022, this is $0.40 for sales $8.00 or less. For sales over $8, this is a 5% fee.
-        // Total price should be a decimal representing the sum of an item's sale price, shipping price, and tax.
-        private static decimal CalculateFacebookFee(decimal totalPrice)
-        {
-            if (totalPrice <= 8)
-            {
-                return 0.40M;
-            }
-
-            return totalPrice * 0.10M;
         }
 
         // Converts a string representation of a currency price to a decimal.
