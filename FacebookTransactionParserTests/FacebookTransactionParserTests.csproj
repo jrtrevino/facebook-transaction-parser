@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-    <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="NUnit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
@@ -20,14 +19,4 @@
   <ItemGroup>
     <ProjectReference Include="..\FacebookTransactionParser\FacebookTransactionParser.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Data\C2C_Order_History_Report_Lisa-Ruiz_07012022_07312022.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Data\Custom-sales-report_070122-073122.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -1,6 +1,6 @@
 ﻿namespace FacebookTransactionParser.Contracts
 {
-    public interface IStatementProcessor
+    public interface ITransactionProcessor
     {
         public Dictionary<string, decimal> GetStatementSummary();
 
