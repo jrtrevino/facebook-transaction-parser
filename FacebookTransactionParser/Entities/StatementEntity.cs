@@ -1,23 +1,25 @@
 ﻿namespace FacebookTransactionParser.Entities
 {
+    using FacebookTransactionParser.Contracts;
+
     public class StatementEntity
     {
         private readonly string fileName;
 
-        private readonly IEnumerable<TransactionEntity> transactionEntities;
+        private readonly IEnumerable<ITransactionEntity> transactionEntities;
 
-        public StatementEntity(string fileName, IEnumerable<TransactionEntity> transactionEntities)
+        internal StatementEntity(string fileName, IEnumerable<ITransactionEntity> transactionEntities)
         {
             this.fileName = fileName;
             this.transactionEntities = transactionEntities;
         }
 
-        public IEnumerable<TransactionEntity> GetTransactions()
+        internal IEnumerable<ITransactionEntity> GetTransactions()
         {
             return this.transactionEntities.ToList();
         }
 
-        public string GetFileName()
+        internal string GetFileName()
         {
             return this.fileName;
         }
