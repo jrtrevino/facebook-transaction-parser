@@ -7,5 +7,7 @@
         public string? Tax { get; set; }
 
         public string? ShippingCost { get; set; }
+
+        public decimal GetVendorFeeFromPrice(string price);
     }
 }
