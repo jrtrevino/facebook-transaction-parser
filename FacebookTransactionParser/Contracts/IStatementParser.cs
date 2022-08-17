@@ -2,7 +2,7 @@
 {
     using FacebookTransactionParser.Entities;
 
-    internal interface IStatementParser
+    public interface IStatementParser
     {
         public StatementEntity? ParseTransactionFile(string filePath);
     }

@@ -1,18 +1,14 @@
 ﻿namespace FacebookTransactionParser
 {
-    using FacebookTransactionParser.Implementations;
-    using Serilog;
+    using Microsoft.Extensions.DependencyInjection;
 
     public class Program
     {
-        public static void Main()
+        public static async Task Main(string[] args)
         {
-            var logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
-            var parser = new StatementParser(logger);
-            var statementEntity = parser.ParseTransactionFile(@"C:\Code\facebook-transaction-parser\Data\C2C_Order_History_Report_Lisa-Ruiz_07012022_07312022.csv");
-            var statementProcessor = new StatementProcessor(statementEntity);
-            statementProcessor.ProcessOrderSummary();
-            var metrics = statementProcessor.GetStatementSummary();
+            var host = new Startup(args).GetHost();
+            var service = host.Services.GetRequiredService<ProgramServiceHandler>();
+            await service.BeginProcessing();
         }
     }
 }

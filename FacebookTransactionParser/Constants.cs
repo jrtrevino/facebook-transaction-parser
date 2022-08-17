@@ -1,4 +1,5 @@
-﻿namespace FacebookTransactionParser{
+﻿namespace FacebookTransactionParser
+{
     internal class Constants
     {
         internal static string FacebookFileName = "C2C_Order_History_Report";
