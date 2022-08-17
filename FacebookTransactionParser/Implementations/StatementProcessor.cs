@@ -6,13 +6,6 @@
 
     public class StatementProcessor : IStatementProcessor
     {
-        private readonly StatementEntity unprocessedEntity;
-
-        public StatementProcessor(StatementEntity unprocessedEntity)
-        {
-            this.unprocessedEntity = unprocessedEntity;
-        }
-
         private decimal TotalRevenue { get; set; } = 0;
 
         private decimal TotalShippingCost { get; set; } = 0;
@@ -35,9 +28,9 @@
         };
         }
 
-        public void ProcessOrderSummary()
+        public void ProcessOrderSummary(StatementEntity unprocessedEntity)
         {
-            var transactionList = this.unprocessedEntity.GetTransactions();
+            var transactionList = unprocessedEntity.GetTransactions();
 
             foreach (var transaction in transactionList)
             {

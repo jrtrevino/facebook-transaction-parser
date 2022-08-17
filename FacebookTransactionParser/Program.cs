@@ -4,11 +4,11 @@
 
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = new Startup(args).GetHost();
             var service = host.Services.GetRequiredService<ProgramServiceHandler>();
-            await service.BeginProcessing();
+            service.BeginProcessing();
         }
     }
 }

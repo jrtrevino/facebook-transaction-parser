@@ -8,27 +8,26 @@ namespace FacebookTransactionParserTests.UnitTests
     public class Tests
     {
         public StatementEntity entity;
+        public StatementProcessor processor;
 
         [SetUp]
         public void Setup()
         {
-            entity = StatementEntityStub.ValidEntity;
+            this.entity = StatementEntityStub.ValidEntity;
+            this.processor = new StatementProcessor();
         }
 
         [Test]
         public void TestStatementProcessingValues()
         {
-            // Arrange
-            var parser = new StatementProcessor(entity);
-
             // Act
-            parser.ProcessOrderSummary();
-            var data = parser.GetStatementSummary();
+            processor.ProcessOrderSummary(this.entity);
+            var data = processor.GetStatementSummary();
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(parser, Is.Not.Null);
+                Assert.That(processor, Is.Not.Null);
                 Assert.That(data, Is.Not.Null);
             });
             Assert.Multiple(() =>

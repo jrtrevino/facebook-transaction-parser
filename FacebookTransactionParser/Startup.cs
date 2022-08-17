@@ -26,6 +26,7 @@
                      .ConfigureServices((_, services) =>
                         {
                         services.AddSingleton<IStatementParser, StatementParser>();
+                        services.AddSingleton<IStatementProcessor, StatementProcessor>();
                         services.AddTransient<ProgramServiceHandler>();
                         })
                      .UseSerilog(new LoggerConfiguration().WriteTo.Console().CreateLogger())

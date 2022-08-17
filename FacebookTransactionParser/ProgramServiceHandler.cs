@@ -2,38 +2,49 @@
 {
     using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
+    using FacebookTransactionParser.Implementations;
     using Serilog;
 
     public class ProgramServiceHandler
     {
         private ILogger logger;
         private IStatementParser parser;
+        private IStatementProcessor processor;
 
-        public ProgramServiceHandler(ILogger logger, IStatementParser parser)
+        public ProgramServiceHandler(ILogger logger, IStatementParser parser, IStatementProcessor processor)
         {
             this.logger = logger;
             this.parser = parser;
+            this.processor = processor;
         }
 
-        public async Task BeginProcessing()
+        public void BeginProcessing()
         {
+            this.logger.Information($"Processing has began at {DateTime.Now}");
+
             // read email
 
             // parse files
             var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(@"C:\Code\facebook-transaction-parser\Data"));
 
+            // process files
             foreach (var entity in parsedEntities)
             {
-                this.logger.Information($"Filename: {entity.GetFileName()}");
+                this.logger.Information($"Processing entity with filename: {entity.GetFileName()}");
+                this.processor.ProcessOrderSummary(entity);
+                var metrics = this.processor.GetStatementSummary();
+                this.logger.Information($"Processed file. Total profit: {metrics["profit"]}");
             }
+
+            // send email with metrics
         }
 
-        internal void ReadEmails()
+        private void ReadEmails()
         {
             return;
         }
 
-        internal IEnumerable<string> ReadFilesFromDirectory(string directoryPath)
+        private IEnumerable<string> ReadFilesFromDirectory(string directoryPath)
         {
             try
             {
@@ -47,7 +58,7 @@
             return new List<string>();
         }
 
-        internal List<StatementEntity> ParseFiles(IEnumerable<string> filesToParse)
+        private List<StatementEntity> ParseFiles(IEnumerable<string> filesToParse)
         {
             var parsedEntities = new List<StatementEntity>();
 
