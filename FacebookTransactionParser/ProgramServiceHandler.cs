@@ -3,6 +3,7 @@
     using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
     using FacebookTransactionParser.Implementations;
+    using Microsoft.Extensions.Options;
     using Serilog;
 
     public class ProgramServiceHandler
@@ -10,22 +11,27 @@
         private ILogger logger;
         private IStatementParser parser;
         private IStatementProcessor processor;
+        private IEmailService emailService;
+        private IOptions<AppConfig> config;
 
-        public ProgramServiceHandler(ILogger logger, IStatementParser parser, IStatementProcessor processor)
+        public ProgramServiceHandler(ILogger logger, IOptions<AppConfig> config, IStatementParser parser, IStatementProcessor processor, IEmailService emailService)
         {
             this.logger = logger;
             this.parser = parser;
             this.processor = processor;
+            this.emailService = emailService;
+            this.config = config;
         }
 
         public void BeginProcessing()
         {
             this.logger.Information($"Processing has began at {DateTime.Now}");
 
-            // read email
+            // download attachments from emails
+            this.emailService.DownloadAttachmentsFromInbox();
 
             // parse files
-            var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(@"C:\Code\facebook-transaction-parser\Data"));
+            var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(this.config.Value.AttachmentDownloadPath));
 
             // process files
             foreach (var entity in parsedEntities)
@@ -37,11 +43,6 @@
             }
 
             // send email with metrics
-        }
-
-        private void ReadEmails()
-        {
-            return;
         }
 
         private IEnumerable<string> ReadFilesFromDirectory(string directoryPath)

@@ -1,32 +1,39 @@
 ﻿namespace FacebookTransactionParser
 {
     using FacebookTransactionParser.Contracts;
+    using FacebookTransactionParser.Entities;
     using FacebookTransactionParser.Implementations;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Serilog;
 
     public class Startup
     {
-        private IHost host;
-
         public Startup(string[] args)
         {
-            this.BuildHost(args);
+            this.BuildAndConfigureHost(args);
         }
 
-        public IHost GetHost()
-        {
-            return this.host;
-        }
+        public IHost AppHost { get; set; }
 
-        public void BuildHost(string[] args)
+        public IConfigurationRoot Configuration { get; set; }
+
+        public void BuildAndConfigureHost(string[] args)
         {
-           this.host = Host.CreateDefaultBuilder(args)
+            this.Configuration = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .Build();
+
+            this.AppHost = Host.CreateDefaultBuilder(args)
                      .ConfigureServices((_, services) =>
                         {
+                        services.AddOptions();
+                        services.Configure<AppConfig>(opts => this.Configuration.GetSection("AppConfig").Bind(opts));
                         services.AddSingleton<IStatementParser, StatementParser>();
                         services.AddSingleton<IStatementProcessor, StatementProcessor>();
+                        services.AddSingleton<IEmailService, EmailService>();
+                        services.AddSingleton<IEmailClientFactory, EmailClientFactory>();
                         services.AddTransient<ProgramServiceHandler>();
                         })
                      .UseSerilog(new LoggerConfiguration().WriteTo.Console().CreateLogger())
