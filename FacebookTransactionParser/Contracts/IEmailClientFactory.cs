@@ -4,6 +4,6 @@
 
     public interface IEmailClientFactory
     {
-        public ImapClient GetImapClient();
+        public ImapClient? GetImapClient();
     }
 }

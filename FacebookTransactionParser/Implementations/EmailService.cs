@@ -25,6 +25,13 @@
         {
             this.logger.Information("Connecting to email client.");
             var client = this.emailClientFactory.GetImapClient();
+
+            if (client == null)
+            {
+                this.logger.Error("Error with generating email client. Please check credentials.");
+                return;
+            }
+
             client.Inbox.Open(FolderAccess.ReadWrite);
             this.logger.Information("Connection successful. Searching inbox for attachments.");
             IList<UniqueId> uids = client.Inbox.Search(SearchQuery.All);
