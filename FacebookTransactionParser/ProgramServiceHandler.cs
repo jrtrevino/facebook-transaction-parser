@@ -27,22 +27,23 @@
         {
             this.logger.Information($"Processing has began at {DateTime.Now}");
 
-            // download attachments from emails
+            var metricsByFileName = new Dictionary<string, Dictionary<string, decimal>>();
+
             this.emailService.DownloadAttachmentsFromInbox();
 
-            // parse files
             var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(this.config.Value.AttachmentDownloadPath));
 
-            // process files
             foreach (var entity in parsedEntities)
             {
                 this.logger.Information($"Processing entity with filename: {entity.GetFileName()}");
                 this.processor.ProcessOrderSummary(entity);
                 var metrics = this.processor.GetStatementSummary();
                 this.logger.Information($"Processed file. Total profit: {metrics["profit"]}");
+                metricsByFileName.Add(entity.GetFileName(), metrics);
             }
 
             // send email with metrics
+            this.emailService.SendEmailWithMetrics(metricsByFileName);
         }
 
         private IEnumerable<string> ReadFilesFromDirectory(string directoryPath)
