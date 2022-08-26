@@ -13,7 +13,7 @@
         private readonly IOptions<AppConfig> config;
         private readonly IEmailClientFactory emailClientFactory;
         private readonly ILogger logger;
-        private Dictionary<string, string> emailSenderByAttachmentFilePath = new Dictionary<string, string>();
+        private readonly Dictionary<string, List<string>> attachmentFilePathBySender = new ();
 
         public EmailService(IOptions<AppConfig> config, IEmailClientFactory emailClientFactory, ILogger logger)
         {
@@ -90,7 +90,26 @@
 
         public void SendEmailWithMetrics(Dictionary<string, Dictionary<string, decimal>> metricsByFileName)
         {
+            foreach (var fileName in metricsByFileName.Keys)
+            {
+                foreach (var sender in this.attachmentFilePathBySender.Keys)
+                {
+                    if (this.attachmentFilePathBySender[sender].Contains(fileName))
+                    {
+                        this.SendEmail(sender, null, this.CreateMessageBody(metricsByFileName[fileName]));
+                    }
+                }
+            }
+        }
+
+        private string CreateMessageBody(Dictionary<string, decimal> dictionary)
+        {
             throw new NotImplementedException();
+        }
+
+        private void SendEmail(string to, string subject, string body)
+        {
+
         }
 
         private void ProcessAttachments(MimeMessage message)
@@ -106,7 +125,7 @@
 
                 var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
                 var filePath = Path.Combine(this.config.Value.AttachmentDownloadPath, fileName);
-                this.emailSenderByAttachmentFilePath[fileName] = sender;
+                this.attachmentFilePathBySender[sender].Add(fileName);
 
                 using (var stream = File.Create(filePath))
                 {

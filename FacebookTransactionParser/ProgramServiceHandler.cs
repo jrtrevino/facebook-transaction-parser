@@ -8,13 +8,18 @@
 
     public class ProgramServiceHandler
     {
-        private ILogger logger;
-        private IStatementParser parser;
-        private IStatementProcessor processor;
-        private IEmailService emailService;
-        private IOptions<AppConfig> config;
+        private readonly ILogger logger;
+        private readonly IStatementParser parser;
+        private readonly IStatementProcessor processor;
+        private readonly IEmailService emailService;
+        private readonly IOptions<AppConfig> config;
 
-        public ProgramServiceHandler(ILogger logger, IOptions<AppConfig> config, IStatementParser parser, IStatementProcessor processor, IEmailService emailService)
+        public ProgramServiceHandler(
+            ILogger logger,
+            IOptions<AppConfig> config,
+            IStatementParser parser,
+            IStatementProcessor processor,
+            IEmailService emailService)
         {
             this.logger = logger;
             this.parser = parser;
@@ -42,7 +47,6 @@
                 metricsByFileName.Add(entity.GetFileName(), metrics);
             }
 
-            // send email with metrics
             this.emailService.SendEmailWithMetrics(metricsByFileName);
         }
 
