@@ -51,6 +51,21 @@
             return null;
         }
 
+        internal static string? GetVendorNameFromFilePath(string filePath)
+        {
+            if (Path.GetFileName(filePath).Contains(Constants.FacebookFileName))
+            {
+                return Constants.Facebook;
+            }
+
+            if (Path.GetFileName(filePath).Contains(Constants.MercariFileName))
+            {
+                return Constants.Mercari;
+            }
+
+            return null;
+        }
+
         private IEnumerable<ITransactionEntity>? GetRecordsFromFile(string filePath)
         {
             this.logger.Information($"Begin parsing of file: {filePath}");

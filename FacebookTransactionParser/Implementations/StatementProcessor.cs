@@ -30,10 +30,17 @@
 
         public void ProcessOrderSummary(StatementEntity unprocessedEntity)
         {
+            this.ClearMetrics();
             var transactionList = unprocessedEntity.GetTransactions();
 
             foreach (var transaction in transactionList)
             {
+                if ((transaction.Id != null && transaction.Id.Contains("Total")) ||
+                    (transaction.OrderStatus != null && transaction.OrderStatus.Contains("Cancelled")))
+                {
+                    continue;
+                }
+
                 // convert values to decimals
                 var revenue = ConvertPriceToDecimal(transaction.Price);
                 var tax = ConvertPriceToDecimal(transaction.Tax);
@@ -52,6 +59,15 @@
 
             // Set total profit after iterating through each transaction.
             this.TotalProfit = this.TotalRevenue - this.TotalSellerFee;
+        }
+
+        private void ClearMetrics()
+        {
+            this.TotalRevenue = 0;
+            this.TotalTaxPrice = 0;
+            this.TotalProfit = 0;
+            this.TotalShippingCost = 0;
+            this.TotalSellerFee = 0;
         }
 
         // Converts a string representation of a currency price to a decimal.

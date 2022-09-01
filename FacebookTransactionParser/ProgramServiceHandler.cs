@@ -3,45 +3,62 @@
     using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
     using FacebookTransactionParser.Implementations;
+    using Microsoft.Extensions.Options;
     using Serilog;
 
     public class ProgramServiceHandler
     {
-        private ILogger logger;
-        private IStatementParser parser;
-        private IStatementProcessor processor;
+        private readonly ILogger logger;
+        private readonly IStatementParser parser;
+        private readonly IStatementProcessor processor;
+        private readonly IEmailService emailService;
+        private readonly IOptions<AppConfig> config;
 
-        public ProgramServiceHandler(ILogger logger, IStatementParser parser, IStatementProcessor processor)
+        public ProgramServiceHandler(
+            ILogger logger,
+            IOptions<AppConfig> config,
+            IStatementParser parser,
+            IStatementProcessor processor,
+            IEmailService emailService)
         {
             this.logger = logger;
             this.parser = parser;
             this.processor = processor;
+            this.emailService = emailService;
+            this.config = config;
         }
 
         public void BeginProcessing()
         {
             this.logger.Information($"Processing has began at {DateTime.Now}");
 
-            // read email
+            if (!this.IsCreateDirectorySuccessful() || !this.TryDeleteFilesInDirectory())
+            {
+                return;
+            }
 
-            // parse files
-            var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(@"C:\Code\facebook-transaction-parser\Data"));
+            var metricsByFileName = new Dictionary<string, Dictionary<string, decimal>>();
 
-            // process files
+            this.emailService.DownloadAttachmentsFromInbox();
+
+            var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(this.config.Value.AttachmentDownloadPath));
+
+            if (parsedEntities.Count == 0)
+            {
+                this.logger.Error("No files to process.");
+                return;
+            }
+
             foreach (var entity in parsedEntities)
             {
                 this.logger.Information($"Processing entity with filename: {entity.GetFileName()}");
                 this.processor.ProcessOrderSummary(entity);
                 var metrics = this.processor.GetStatementSummary();
                 this.logger.Information($"Processed file. Total profit: {metrics["profit"]}");
+                metricsByFileName.Add(entity.GetFileName(), metrics);
             }
 
-            // send email with metrics
-        }
-
-        private void ReadEmails()
-        {
-            return;
+            this.emailService.SendEmailWithMetrics(metricsByFileName);
         }
 
         private IEnumerable<string> ReadFilesFromDirectory(string directoryPath)
@@ -73,6 +90,42 @@
             }
 
             return parsedEntities;
+        }
+
+        private bool IsCreateDirectorySuccessful()
+        {
+            try
+            {
+                var directory = Directory.CreateDirectory(this.config.Value.AttachmentDownloadPath);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                this.logger.Error($"Error creating attachment directory: {exception.Message}");
+            }
+
+            return false;
+        }
+
+        private bool TryDeleteFilesInDirectory()
+        {
+            try
+            {
+                var files = Directory.EnumerateFiles(this.config.Value.AttachmentDownloadPath);
+
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                this.logger.Error($"Files detected in attachment download path. Error when trying to delete: {exception.Message}");
+            }
+
+            return false;
         }
     }
 }

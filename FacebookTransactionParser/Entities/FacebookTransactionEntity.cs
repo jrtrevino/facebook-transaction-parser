@@ -7,7 +7,7 @@
     internal class FacebookTransactionEntity : ITransactionEntity
     {
         [Name("Order ID")]
-        public long OrderId { get; set; }
+        public string? Id { get; set; }
 
         [Name("Date")]
         public string? Date { get; set; }
