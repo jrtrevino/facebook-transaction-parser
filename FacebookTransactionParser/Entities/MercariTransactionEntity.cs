@@ -1,13 +1,13 @@
-﻿namespace FacebookTransactionParser.Entities
-{
-    using CsvHelper.Configuration.Attributes;
-    using FacebookTransactionParser.Contracts;
-    using System.Globalization;
+﻿using CsvHelper.Configuration.Attributes;
+using FacebookTransactionParser.Contracts;
+using System.Globalization;
 
+namespace FacebookTransactionParser.Entities
+{
     internal class MercariTransactionEntity : ITransactionEntity
     {
         [Name("Item Id")]
-        public string? ItemId { get; set; }
+        public string? Id {get; set; }
 
         [Name("Sold Date")]
         public string? Date { get; set; }

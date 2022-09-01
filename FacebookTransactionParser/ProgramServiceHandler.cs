@@ -32,11 +32,22 @@
         {
             this.logger.Information($"Processing has began at {DateTime.Now}");
 
+            if (!this.IsCreateDirectorySuccessful() || !this.TryDeleteFilesInDirectory())
+            {
+                return;
+            }
+
             var metricsByFileName = new Dictionary<string, Dictionary<string, decimal>>();
 
             this.emailService.DownloadAttachmentsFromInbox();
 
             var parsedEntities = this.ParseFiles(this.ReadFilesFromDirectory(this.config.Value.AttachmentDownloadPath));
+
+            if (parsedEntities.Count == 0)
+            {
+                this.logger.Error("No files to process.");
+                return;
+            }
 
             foreach (var entity in parsedEntities)
             {
@@ -79,6 +90,42 @@
             }
 
             return parsedEntities;
+        }
+
+        private bool IsCreateDirectorySuccessful()
+        {
+            try
+            {
+                var directory = Directory.CreateDirectory(this.config.Value.AttachmentDownloadPath);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                this.logger.Error($"Error creating attachment directory: {exception.Message}");
+            }
+
+            return false;
+        }
+
+        private bool TryDeleteFilesInDirectory()
+        {
+            try
+            {
+                var files = Directory.EnumerateFiles(this.config.Value.AttachmentDownloadPath);
+
+                foreach (var file in files)
+                {
+                    File.Delete(file);
+                }
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                this.logger.Error($"Files detected in attachment download path. Error when trying to delete: {exception.Message}");
+            }
+
+            return false;
         }
     }
 }
