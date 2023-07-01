@@ -34,6 +34,7 @@
 
             if (!this.IsCreateDirectorySuccessful() || !this.TryDeleteFilesInDirectory())
             {
+                this.logger.Information("Failed to create startup directory.");
                 return;
             }
 

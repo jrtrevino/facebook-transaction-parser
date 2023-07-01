@@ -48,7 +48,7 @@
         [Name("ZIP Code")]
         public string? ZipCode { get; set; }
 
-        [Name("Order Status")]
+        [Name("Order status")]
         public string? OrderStatus { get; set; }
 
         public decimal GetVendorFeeFromPrice(string price)

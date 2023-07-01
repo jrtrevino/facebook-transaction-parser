@@ -140,6 +140,7 @@
             email.Body = new TextPart(TextFormat.Html) { Text = body };
             client.Send(email);
             client.Disconnect(quit: true);
+            this.logger.Information($"Email successfully sent to {to}.");
         }
 
         private void ProcessAttachments(MimeMessage message)
