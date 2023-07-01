@@ -23,7 +23,7 @@
                 return null;
             }
 
-            this.logger.Information($"File path received: {filePath}");
+            this.logger.Information($"Begin Parsing of file: {filePath}");
 
             var entities = this.GetRecordsFromFile(filePath);
 
@@ -32,6 +32,8 @@
                 this.logger.Information($"No records were parsed from the file.");
                 return null;
             }
+
+            this.logger.Information("Parsing has complete");
 
             return new StatementEntity(Path.GetFileName(filePath), entities);
         }
