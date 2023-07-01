@@ -36,8 +36,8 @@
                         services.AddSingleton<IEmailClientFactory, EmailClientFactory>();
                         services.AddTransient<ProgramServiceHandler>();
                         })
-                     .UseSerilog(new LoggerConfiguration().WriteTo.Console().CreateLogger())
-                     .Build();
+                    .UseSerilog((hostingContext, loggerConfiguration) =>
+                        loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration)).Build();
         }
     }
 }
