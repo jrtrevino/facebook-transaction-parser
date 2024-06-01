@@ -2,7 +2,6 @@
 {
     using FacebookTransactionParser.Contracts;
     using FacebookTransactionParser.Entities;
-    using FacebookTransactionParser.Implementations;
     using Microsoft.Extensions.Options;
     using Serilog;
 

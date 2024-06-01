@@ -42,7 +42,7 @@ namespace FacebookTransactionParser.Entities
         [Name("Mercari Selling Fee")]
         public string? VendorFee { get; set; }
 
-        [Name("Payment Processing Fee")]
+        [Name("Payment Processing Fee Charged To Seller")]
         public string? PaymentProcessingFee { get; set; }
 
         [Name("Shipping Adjustment Fee")]
